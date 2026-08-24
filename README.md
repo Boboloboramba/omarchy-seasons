@@ -35,10 +35,19 @@ To manually set a specific month's wallpaper:
 ```bash
 # Set to a specific month
 omarchy theme bg set ~/.config/omarchy/themes/seasons/backgrounds/01-january-winter.jpg
+```
 
-# Or use the auto-switcher
-chmod +x season-switch.sh
-./season-switch.sh
+## Testing & Season Cycling
+
+Press `SUPER+ALT+S` to cycle through seasons (changes both particles and wallpaper).
+
+Terminal commands:
+
+```bash
+./season-switch.sh cycle      # Next season
+./season-switch.sh winter     # Specific season
+./season-switch.sh reset      # Back to automatic
+omarchy-shell seasons current # Show current season
 ```
 
 ## How It Works

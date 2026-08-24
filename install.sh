@@ -27,6 +27,8 @@ echo "Installing particle plugin to $PLUGIN_DEST..."
 mkdir -p "$PLUGIN_DEST"
 cp "$PLUGIN_SRC/manifest.json" "$PLUGIN_DEST/"
 cp "$PLUGIN_SRC/Seasons.qml" "$PLUGIN_DEST/"
+cp "$PLUGIN_SRC/season-switch.sh" "$PLUGIN_DEST/"
+chmod +x "$PLUGIN_DEST/season-switch.sh"
 echo "  Plugin files copied."
 
 # Enable plugin in shell.json
