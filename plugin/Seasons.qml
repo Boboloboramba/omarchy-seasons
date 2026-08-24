@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
+import QtQuick.Effects
 
 Item {
   id: root
@@ -56,11 +57,11 @@ Item {
         drag: 0.998,
         life: (h + 20) / 35,
         age: 0,
-        size: 3 + Math.random() * 6,
+        size: 6 + Math.random() * 10,
         rotation: Math.random() * 360,
         rotationSpeed: (Math.random() - 0.5) * 60,
         color: colors[Math.floor(Math.random() * colors.length)],
-        opacity: 0.5 + Math.random() * 0.5,
+        opacity: 0.75 + Math.random() * 0.25,
         type: "snow",
         wobbleOffset: Math.random() * Math.PI * 2,
         wobbleSpeed: 1 + Math.random() * 2,
@@ -78,13 +79,13 @@ Item {
         drag: 0.999,
         life: (h + 40) / 450,
         age: 0,
-        size: 1 + Math.random() * 1.5,
+        size: 2 + Math.random() * 2,
         rotation: 0,
         rotationSpeed: 0,
         color: colors[Math.floor(Math.random() * colors.length)],
-        opacity: 0.3 + Math.random() * 0.4,
+        opacity: 0.6 + Math.random() * 0.3,
         type: "rain",
-        length: 10 + Math.random() * 15,
+        length: 18 + Math.random() * 20,
         wobbleOffset: 0,
         wobbleSpeed: 0,
         wobbleAmp: 0
@@ -101,16 +102,16 @@ Item {
         drag: 0.997,
         life: (h + 20) / 25,
         age: 0,
-        size: 2 + Math.random() * 3,
+        size: 4 + Math.random() * 5,
         rotation: Math.random() * 360,
         rotationSpeed: (Math.random() - 0.5) * 40,
         color: colors[Math.floor(Math.random() * colors.length)],
-        opacity: 0.4 + Math.random() * 0.5,
+        opacity: 0.7 + Math.random() * 0.3,
         type: "dandelion",
         wobbleOffset: Math.random() * Math.PI * 2,
         wobbleSpeed: 0.8 + Math.random() * 1.5,
         wobbleAmp: 20 + Math.random() * 35,
-        stemLength: 8 + Math.random() * 12
+        stemLength: 14 + Math.random() * 16
       })
     } else if (season === "autumn") {
       // Falling leaves
@@ -124,11 +125,11 @@ Item {
         drag: 0.996,
         life: (h + 30) / 60,
         age: 0,
-        size: 6 + Math.random() * 8,
+        size: 10 + Math.random() * 12,
         rotation: Math.random() * 360,
         rotationSpeed: 40 + Math.random() * 80,
         color: colors[Math.floor(Math.random() * colors.length)],
-        opacity: 0.6 + Math.random() * 0.4,
+        opacity: 0.8 + Math.random() * 0.2,
         type: "leaf",
         wobbleOffset: Math.random() * Math.PI * 2,
         wobbleSpeed: 1.5 + Math.random() * 2,
@@ -227,7 +228,7 @@ Item {
       x: px - size / 2
       y: py - size / 2
       width: size
-      height: size
+      height: type === "rain" ? length : (type === "dandelion" ? size + stemLength : size)
       rotation: rot
       opacity: {
         var fadeIn = Math.min(1, model.age * 3)
@@ -235,7 +236,16 @@ Item {
         return particleOpacity * fadeIn * fadeOut
       }
 
-      // Snowflake - soft white circle
+      layer.enabled: true
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#60000000"
+        shadowBlur: 0.6
+        shadowVerticalOffset: 3
+        shadowHorizontalOffset: 1
+      }
+
+      // Snowflake - soft white circle with glow
       Rectangle {
         visible: type === "snow"
         anchors.centerIn: parent
@@ -243,7 +253,7 @@ Item {
         height: particleRoot.size
         radius: width / 2
         color: particleRoot.color
-        opacity: 0.8
+        opacity: 0.9
       }
 
       // Raindrop - thin angled line
@@ -253,7 +263,7 @@ Item {
         width: particleRoot.size
         height: particleRoot.length
         color: particleRoot.color
-        opacity: 0.6
+        opacity: 0.75
         rotation: -8
       }
 
@@ -261,14 +271,14 @@ Item {
       Rectangle {
         visible: type === "leaf"
         anchors.centerIn: parent
-        width: particleRoot.size * 1.4
+        width: particleRoot.size * 1.5
         height: particleRoot.size
-        radius: 2
+        radius: 3
         color: particleRoot.color
-        opacity: 0.85
+        opacity: 0.9
       }
 
-      // Dandelion seed - small circle with stem line
+      // Dandelion seed - circle with stem lines
       Item {
         visible: type === "dandelion"
         anchors.centerIn: parent
@@ -278,16 +288,16 @@ Item {
           height: particleRoot.size
           radius: width / 2
           color: particleRoot.color
-          opacity: 0.9
+          opacity: 0.95
           anchors.horizontalCenter: parent.horizontalCenter
           anchors.top: parent.top
         }
 
         Rectangle {
-          width: 1
+          width: 1.5
           height: particleRoot.stemLength
-          color: "#cccccc"
-          opacity: 0.5
+          color: "#aaaaaa"
+          opacity: 0.7
           anchors.horizontalCenter: parent.horizontalCenter
           anchors.top: parent.bottom
         }
