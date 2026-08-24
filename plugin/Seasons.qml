@@ -7,6 +7,8 @@ Item {
 
   property var shell: null
   property bool opened: false
+  property real screenW: 1920
+  property real screenH: 1080
 
   function open(payloadJson) { root.opened = true }
   function close() { root.opened = false }
@@ -39,8 +41,8 @@ Item {
   function spawnParticle() {
     if (particleModel.count > 180) return
 
-    var w = panel ? panel.width : 1920
-    var h = panel ? panel.height : 1080
+    var w = root.screenW
+    var h = root.screenH
 
     if (season === "winter") {
       // Snowflakes
@@ -309,6 +311,13 @@ Item {
       WlrLayershell.layer: WlrLayer.Background
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
       exclusionMode: ExclusionMode.Ignore
+
+      Component.onCompleted: {
+        root.screenW = width
+        root.screenH = height
+      }
+      onWidthChanged: root.screenW = width
+      onHeightChanged: root.screenH = height
 
       Repeater {
         model: particleModel
