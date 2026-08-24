@@ -15,7 +15,7 @@ Item {
   property var seasonNames: ["winter", "spring", "summer", "autumn"]
   property var seasonMonths: [1, 4, 7, 10]
   property bool themeActive: false
-  readonly property string themeNamePath: Quickshell.env("HOME") + "/.local/state/omarchy/current/theme.name"
+  property string currentThemeName: ""
 
   function open(payloadJson) { root.opened = true }
   function close() { root.opened = false }
@@ -37,24 +37,39 @@ Item {
     if (idx >= 0) overrideMonth = seasonMonths[idx]
   }
 
-  function checkTheme() {
-    if (!themeNameFile.stat()) return
-    var content = themeNameFile.text().trim()
+  function updateTheme(name) {
+    var trimmed = name.trim()
+    if (trimmed === currentThemeName) return
+    currentThemeName = trimmed
     var wasActive = themeActive
-    themeActive = (content === "seasons")
+    themeActive = (trimmed === "seasons")
     if (wasActive && !themeActive) {
       particleModel.clear()
     }
   }
 
-  FileView {
-    id: themeNameFile
-    path: root.themeNamePath
-    onContentChanged: root.checkTheme()
-    onStatFailed: root.themeActive = false
+  Process {
+    id: themeCheckProc
+    command: ["cat", Quickshell.env("HOME") + "/.local/state/omarchy/current/theme.name"]
+    running: false
+    stdout: SplitParser {
+      onRead: data => root.updateTheme(data)
+    }
   }
 
-  Component.onCompleted: checkTheme()
+  Timer {
+    id: themePollTimer
+    interval: 2000
+    repeat: true
+    running: true
+    onTriggered: {
+      if (!themeCheckProc.running) themeCheckProc.running = true
+    }
+  }
+
+  Component.onCompleted: {
+    themeCheckProc.running = true
+  }
 
   // Current month (1-12)
   property int currentMonth: overrideMonth > 0 ? overrideMonth : new Date().getMonth() + 1
