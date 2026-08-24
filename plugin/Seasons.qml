@@ -14,6 +14,8 @@ Item {
   property int overrideMonth: -1
   property var seasonNames: ["winter", "spring", "summer", "autumn"]
   property var seasonMonths: [1, 4, 7, 10]
+  property bool themeActive: false
+  readonly property string themeNamePath: Quickshell.env("HOME") + "/.local/state/omarchy/current/theme.name"
 
   function open(payloadJson) { root.opened = true }
   function close() { root.opened = false }
@@ -34,6 +36,25 @@ Item {
     var idx = seasonNames.indexOf(name)
     if (idx >= 0) overrideMonth = seasonMonths[idx]
   }
+
+  function checkTheme() {
+    if (!themeNameFile.stat()) return
+    var content = themeNameFile.text().trim()
+    var wasActive = themeActive
+    themeActive = (content === "seasons")
+    if (wasActive && !themeActive) {
+      particleModel.clear()
+    }
+  }
+
+  FileView {
+    id: themeNameFile
+    path: root.themeNamePath
+    onContentChanged: root.checkTheme()
+    onStatFailed: root.themeActive = false
+  }
+
+  Component.onCompleted: checkTheme()
 
   // Current month (1-12)
   property int currentMonth: overrideMonth > 0 ? overrideMonth : new Date().getMonth() + 1
@@ -209,7 +230,7 @@ Item {
       }
     }
     repeat: true
-    running: true
+    running: root.themeActive
     onTriggered: root.spawnParticle()
   }
 
@@ -218,7 +239,7 @@ Item {
     id: tickTimer
     interval: 16
     repeat: true
-    running: true
+    running: root.themeActive
     property real lastTime: Date.now()
     onTriggered: {
       var now = Date.now()
@@ -479,7 +500,7 @@ Item {
 
       screen: modelData
       anchors { top: true; bottom: true; left: true; right: true }
-      visible: true
+      visible: root.themeActive
       color: "transparent"
 
       WlrLayershell.namespace: "omarchy-seasons"
