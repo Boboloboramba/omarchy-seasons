@@ -10,7 +10,6 @@ set -e
 
 THEME_DIR="$HOME/.config/omarchy/themes/seasons/backgrounds"
 
-# Map season to default month and wallpaper
 get_wallpaper() {
   local month=$1
   case $month in
@@ -35,25 +34,23 @@ set_wallpaper() {
   local path="$THEME_DIR/$wp"
   if [ -f "$path" ]; then
     omarchy-theme-bg-set "$path"
-    echo "Wallpaper: $wp"
   fi
 }
 
 case "${1:-}" in
   cycle)
-    result=$(omarchy-shell -q seasons cycle)
-    echo "$result"
-    # Also cycle the wallpaper
-    case "$result" in
-      *winter) set_wallpaper 1 ;;
-      *spring) set_wallpaper 4 ;;
-      *summer) set_wallpaper 7 ;;
-      *autumn) set_wallpaper 10 ;;
+    # Get current season, advance it, set wallpaper
+    current=$(omarchy-shell seasons current 2>/dev/null || echo "")
+    case "$current" in
+      winter*) set_wallpaper 4; omarchy-shell seasons set spring ;;
+      spring*) set_wallpaper 7; omarchy-shell seasons set summer ;;
+      summer*) set_wallpaper 10; omarchy-shell seasons set autumn ;;
+      autumn*) set_wallpaper 1; omarchy-shell seasons set winter ;;
+      *)       set_wallpaper 7; omarchy-shell seasons set summer ;;
     esac
     ;;
   winter|spring|summer|autumn)
-    omarchy-shell -q seasons set "$1"
-    echo "Season: $1"
+    omarchy-shell seasons set "$1"
     case "$1" in
       winter) set_wallpaper 1 ;;
       spring) set_wallpaper 4 ;;
@@ -62,14 +59,12 @@ case "${1:-}" in
     esac
     ;;
   reset)
-    omarchy-shell -q seasons reset
+    omarchy-shell seasons reset
     month=$(date +%-m)
     set_wallpaper $month
-    echo "Reset to automatic (month $month)"
     ;;
   *)
     month=$(date +%-m)
     set_wallpaper $month
-    echo "Set to current month: $month"
     ;;
 esac
