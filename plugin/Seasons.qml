@@ -10,14 +10,32 @@ Item {
   property bool opened: false
   property real screenW: 1920
   property real screenH: 1080
+  property int overrideMonth: -1
+  property var seasonNames: ["winter", "spring", "summer", "autumn"]
+  property var seasonMonths: [1, 4, 7, 10]
 
   function open(payloadJson) { root.opened = true }
   function close() { root.opened = false }
   function ping() { return "ok" }
   function state() { return root.opened ? "open" : "closed" }
 
+  function cycleSeason() {
+    var idx = seasonNames.indexOf(season)
+    var nextIdx = (idx + 1) % 4
+    overrideMonth = seasonMonths[nextIdx]
+  }
+
+  function resetSeason() {
+    overrideMonth = -1
+  }
+
+  function setSeason(name) {
+    var idx = seasonNames.indexOf(name)
+    if (idx >= 0) overrideMonth = seasonMonths[idx]
+  }
+
   // Current month (1-12)
-  property int currentMonth: new Date().getMonth() + 1
+  property int currentMonth: overrideMonth > 0 ? overrideMonth : new Date().getMonth() + 1
 
   // Season detection
   property string season: {
@@ -206,6 +224,33 @@ Item {
       var dt = (now - lastTime) / 1000
       lastTime = now
       root.stepParticles(dt)
+    }
+  }
+
+  IpcHandler {
+    target: "seasons"
+
+    function cycle(): string {
+      root.cycleSeason()
+      return "season: " + root.season
+    }
+
+    function set(name: string): string {
+      root.setSeason(name)
+      return "season: " + root.season
+    }
+
+    function reset(): string {
+      root.resetSeason()
+      return "season: " + root.season
+    }
+
+    function current(): string {
+      return root.season + " (month " + root.currentMonth + ")"
+    }
+
+    function ping(): string {
+      return "ok"
     }
   }
 
