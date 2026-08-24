@@ -2,6 +2,10 @@
 
 A beautiful animated theme that represents the changing seasons of the year with particle effects that change based on the current month.
 
+![Summer - Dandelion Seeds](screenshots/screenshot-2026-08-24_15-55-30.png)
+
+![Autumn - Falling Leaves](screenshots/screenshot-2026-08-24_15-56-23.png)
+
 ## Features
 
 - **12 photorealistic wallpapers** - One for each month, sourced from Unsplash
