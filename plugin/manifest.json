@@ -5,9 +5,8 @@
   "version": "1.0.0",
   "author": "robertetheridge",
   "description": "Animated seasonal particle effects overlay - snowflakes, rain, falling leaves, and dandelion seeds",
-  "kinds": ["panel"],
-  "keepLoaded": true,
+  "kinds": ["service"],
   "entryPoints": {
-    "panel": "Seasons.qml"
+    "service": "Seasons.qml"
   }
 }
