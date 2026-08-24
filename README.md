@@ -6,7 +6,7 @@ A beautiful animated theme that represents the changing seasons of the year with
 
 ![Autumn - Falling Leaves](screenshots/screenshot-2026-08-24_15-56-23.png)
 
-https://github.com/user-attachments/assets/screenrecording-2026-08-24_15-59-19.mp4
+**Screen recording:** [seasons-demo.mp4](screenshots/screenrecording-2026-08-24_15-59-19.mp4)
 
 ## Features
 
