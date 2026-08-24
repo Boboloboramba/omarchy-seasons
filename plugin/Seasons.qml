@@ -286,6 +286,10 @@ Item {
       return root.season + " (month " + root.currentMonth + ")"
     }
 
+    function status(): string {
+      return "theme=" + root.currentThemeName + " active=" + root.themeActive + " particles=" + particleModel.count
+    }
+
     function ping(): string {
       return "ok"
     }
